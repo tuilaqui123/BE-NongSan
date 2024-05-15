@@ -1,0 +1,15 @@
+quidhtv0149
+vxt4Mbdkeal0MIE6
+
+!important
+    SQL
+    API là gì, cách tổ chức, thiết kế API 
+    các phương thức PUT, POST, GET, DELETE, PATCH
+    thiết kế hệ thống (system design) (controller / service / router)
+    cách FE gửi API lên BE hoạt động như thế nào? (khi nhấn thêm thì BE gửi API về, sau đó kiểm tra và đưa vào controller -> database)
+
+?6
+    mircoservice 
+
+/
+    https://www.youtube.com/@ByteByteGo (system design)
