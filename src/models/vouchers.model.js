@@ -3,10 +3,7 @@ const Schema = mongoose.Schema;
 
 const VouchersSchema = new Schema(
     {
-        name: {
-            type: String,
-            required: true,
-        },
+        name: String,
         conditionText: String,
         conditionValue: Number,
         percent: Number,
