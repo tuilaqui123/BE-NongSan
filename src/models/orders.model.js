@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 
 const OrdersSchema = new Schema(
     {
-        ID: String,
         total: Number,
         intoMoney: Number,
         date: Date,

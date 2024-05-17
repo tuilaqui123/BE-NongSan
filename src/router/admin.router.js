@@ -8,7 +8,16 @@ multer({
 })
 
 const FarmController = require('../controllers/farms.controller')
+const ItemsController = require('../controllers/items.controller')
 
+//items
+router.post('/items', upload.single('image'), ItemsController.addItem)
+router.get('/items', ItemsController.getItem)
+router.get('/items/:id', ItemsController.getItemID)
+router.put('/items/:id', ItemsController.updateItem)
+router.delete('/items/:id', ItemsController.deleteItem)
+
+//farms
 router.post('/farms', upload.single('image'), FarmController.addFarm)
 router.get('/farms', FarmController.getFarm)
 router.get('/farms/:id', FarmController.getFarmID)

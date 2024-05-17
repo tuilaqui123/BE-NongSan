@@ -7,7 +7,7 @@ const CustomerSchema = new Schema(
             type: String,
             required: true,
         },
-        avatar: [String],
+        avatar: String,
         email: String,
         phone: {
             type: String,

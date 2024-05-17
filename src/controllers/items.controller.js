@@ -1,17 +1,46 @@
-const Items = require("../models/items.models")
+const ItemsService = require('../services/items.services')
 
-// [GET] api/product
-const read = async (req, res, next) => {
-    try {
-        const items = await Items.find()
-            .populate('Farm')
-            .populate('Types')
-            .populate('Comments');
-        return res.status(200).json({ success: true, itemss });
-    } catch (err) {
-        console.log(err);
-        return res
-            .status(500)
-            .json({ success: false, status: 500, message: 'Internal server error' });
+class ItemsController {
+
+    addItem = async (req, res, next) => {
+        try {
+            return res.status(201).json(await ItemsService.addItem(req.file.path, req.body))
+        } catch (error) {
+            next(error)
+        }
     }
-};
+
+    getItem = async (req, res, next) => {
+        try {
+            return res.status(201).json(await ItemsService.getItem())
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    getItemID = async (req, res, next) => {
+        try {
+            return res.status(201).json(await ItemsService.getItemID(req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    updateItem = async (req, res, next) => {
+        try {
+            return res.status(201).json(await ItemsService.updateItem(req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    deleteItem = async (req, res, next) => {
+        try {
+            return res.status(201).json(await ItemsService.deleteItem(req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
+}
+
+module.exports = new ItemsController()
