@@ -10,6 +10,7 @@ multer({
 const FarmController = require('../controllers/farms.controller')
 const ItemsController = require('../controllers/items.controller')
 const VouchersController = require('../controllers/voucers.controller')
+const OrdersController = require('../controllers/orders.controller')
 
 //items
 router.post('/items', upload.single('image'), ItemsController.addItem)
@@ -31,5 +32,12 @@ router.get('/vouchers', VouchersController.getVoucher)
 router.get('/vouchers/:id', VouchersController.getVoucherID)
 router.put('/vouchers/:id', VouchersController.updateVoucher)
 router.delete('/vouchers/:id', VouchersController.deleteVoucher)
+
+//orders
+router.post('/orders', OrdersController.addOrder)
+router.get('/orders', OrdersController.getOrder)
+router.get('/orders/:id', OrdersController.getOrder)
+router.put('/orders/:id', OrdersController.updateOrder)
+router.delete('/orders/:id', OrdersController.deleteOrder)
 
 module.exports = router

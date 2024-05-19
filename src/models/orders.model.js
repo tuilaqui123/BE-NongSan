@@ -20,12 +20,10 @@ const OrdersSchema = new Schema(
             ref: 'Vouchers',
         },
         deliveryStatus: {
-            type: String,
-            enum: ['Chờ xác nhận', 'Đang giao', 'Hoàn thành'],
+            type: String
         },
         paymentStatus: {
-            type: String,
-            enum: ['Tiền mặt', 'Chuyển khoản'],
+            type: String
         },
     },
     {
