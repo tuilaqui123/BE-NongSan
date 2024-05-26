@@ -41,7 +41,15 @@ class FarmService {
 
     static getFarmID = async ({ id }) => {
         try {
-            return await Farms.findById(id)
+            const existFarm = await Farms.findById(id);
+            if (!existFarm){
+                return {
+                    success: false,
+                    message: "Don't exist"
+                }
+            }
+
+            return existFarm
         } catch (error) {
             return {
                 success: false,
@@ -52,7 +60,15 @@ class FarmService {
 
     static updateFarm = async ({ id }, { name, email, phone, link, info }) => {
         try {
-            return await Farms.findByIdAndUpdate(id, { name, email, phone, link, info })
+            const existFarm = await Farms.findByIdAndUpdate(id, { name, email, phone, link, info }, {new: true})
+            if (!existFarm){
+                return {
+                    success: false,
+                    message: "Don't exist"
+                }
+            }
+
+            return existFarm
         } catch (error) {
             return {
                 success: false,

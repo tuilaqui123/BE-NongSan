@@ -6,10 +6,12 @@ const OrdersSchema = new Schema(
         total: Number,
         intoMoney: Number,
         date: Date,
-        items: {
-            type: Schema.Types.ObjectId,
-            ref: 'Items',
-        },
+        items: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Items',
+            }
+        ],
         customer: {
             type: Schema.Types.ObjectId,
             ref: 'Customer',

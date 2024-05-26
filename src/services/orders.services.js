@@ -4,19 +4,23 @@ const getData = require('../utils/formatRes')
 class OrdersServices {
     static addOrder = async ({ total, intoMoney, date }) => {
         try {
-            // const isExist = await Orders.findOne({ id }).lean();
-            // if (isExist) {
-            //     return {
-            //         success: false,
-            //         message: "Already exist"
-            //     }
-            // }
-
             const newOrder = new Orders({
                 total, intoMoney, date
             })
             // return await newOrder.save()
-            return getData({ fields: ['_id', 'total', 'intoMoney', 'date', ''] })
+            await newOrder.save();
+            return getData({ fields: ['_id', 'total', 'intoMoney', 'date', ''], object: newOrder})
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
+    static getOrder = async () => {
+        try {
+            return await Orders.find();
         } catch (error) {
             return {
                 success: false,
