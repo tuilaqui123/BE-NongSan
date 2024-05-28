@@ -28,7 +28,7 @@ class ItemsController {
 
     updateItem = async (req, res, next) => {
         try {
-            return res.status(201).json(await ItemsService.updateItem(req.params))
+            return res.status(201).json(await ItemsService.updateItem(req.params, req.body))
         } catch (error) {
             next(error)
         }
