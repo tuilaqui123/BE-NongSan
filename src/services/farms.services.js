@@ -79,8 +79,18 @@ class FarmService {
 
     static deleteFarm = async ({ id }) => {
         try {
-            console.log(id)
-            return await Farms.findByIdAndDelete(id)
+            const existFarm = await Farms.findByIdAndDelete(id);
+            if (!existFarm){
+                return {
+                    success: false,
+                    message: "Don't exist"
+                }
+            }
+
+            return {
+                success: true,
+                message: "Delete successfully"
+            }
         } catch (error) {
             return {
                 success: false,

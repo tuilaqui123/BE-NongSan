@@ -41,7 +41,6 @@ class OrdersController {
             next(error)
         }
     }
-
 }
 
 module.exports = new OrdersController()
