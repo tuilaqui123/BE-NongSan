@@ -5,18 +5,40 @@ const OrdersSchema = new Schema(
     {
         total: Number,
         intoMoney: Number,
-        date: Date,
+        deliveryFee: Number,
         deliveryStatus: String,
         paymentStatus: String,
-        items: {
-            type: Schema.Types.ObjectId,
-            ref: 'Items',
-        },
+        items: [
+            {
+                item: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Items',
+                },
+                amount: {
+                    type: Number,
+                    required: true,
+                },
+                price:{
+                    type: Number,
+                    required: true
+                }
+            }
+        ],
         customer: {
             name: String,
             phone: String,
-            address: String
+            address: String,
+            email: String,
+            note: String
         },
+        // user: {
+        //     type: Schema.Types.ObjectId,
+        //     ref: 'User',
+        // },
+        voucher: {
+            type: Schema.Types.ObjectId,
+            ref: 'Vouchers',
+        }
     },
     {
         timestamps: true,

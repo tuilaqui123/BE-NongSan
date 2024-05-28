@@ -1,44 +1,59 @@
 const Orders = require('../models/orders.model')
+const Vouchers = require('../models/vouchers.model')
+const Items = require('../models/items.models')
 const getData = require('../utils/formatRes')
 const _ = require('lodash');
 class OrdersServices {
-    static addOrder = async ({ total, intoMoney, date, deliveryStatus, paymentStatus }) => {
+    
+    static addOrder = async ({ deliveryFee, items, customer, voucher, method }) => {
+        // method is bank and cast
         try {
+            // check exist voucher
+            const existVoucher = await Vouchers.findById(voucher)
+            
+            // check exist list item
+            const results = await Promise.all(
+                items.map(async (ele) => {
+                    const existItem = await Items.findById(ele.item);
+                    return !!existItem;
+                })
+            );
+            
+            const allExistItem = results.every(exist => exist);
+            
+            if (!allExistItem) {
+                return {
+                    success: false,
+                    message: "One or more items don't exist",
+                };
+            }
+
+            const checkPaymentStatus = method === "cast" ? "Chua thanh toan" : "Da thanh toan"
+
+            var firstPrice = items.reduce((total, item) => {
+                return total + (item.amount * item.price);
+            }, 0);
+
+            if (existVoucher){
+                var totalPrice = (firstPrice*existVoucher.percent)/100; 
+            }
+
+            totalPrice = totalPrice + deliveryFee;
+
             const newOrder = new Orders({
-                total, intoMoney, date, deliveryStatus, paymentStatus
+                total: totalPrice,
+                intoMoney: firstPrice,
+                deliveryStatus: "Dang van chuyen",
+                paymentStatus: checkPaymentStatus,
+                deliveryFee,
+                items: items,
+                customer,
+                voucher
             })
-            return getData({ fields: ['_id', 'total', 'intoMoney', 'date', 'deliveryStatus', 'paymentStatus', 'items'], object: await newOrder.save() })
-        } catch (error) {
-            return {
-                success: false,
-                message: error.message
-            }
-        }
-    }
 
-    static getOrder = async () => {
-        try {
-            // const Orders = await Orders.find().populate({
-            //     path: "items"
-            // }).lean()
+            const savedOrder = newOrder.save()
 
-            // return _.map(Order, obj => getData({
-            //     fields: ['_id', 'total', 'intoMoney', 'date', 'deliveryStatus', 'paymentStatus', 'items'], object: obj
-            // }))
-
-            return await Orders.find()
-
-        } catch (error) {
-            return {
-                success: false,
-                message: error.message
-            }
-        }
-    }
-
-    static getOrderID = async ({ id }) => {
-        try {
-            return await Orders.findById(id)
+            return (await (await savedOrder).populate('voucher')).populate('items.item')
         } catch (error) {
             return {
                 success: false,
@@ -71,7 +86,9 @@ class OrdersServices {
 
     static getOrder = async () => {
         try {
-            return await Orders.find();
+            const orders = await Orders.find({})
+                        .populate("voucher").populate('items.item')
+            return orders;
         } catch (error) {
             return {
                 success: false,
@@ -90,7 +107,7 @@ class OrdersServices {
                 }
             }
             
-            return existOrder;
+            return (await existOrder.populate('voucher')).populate('items.item');
         } catch (error) {
             return {
                 success: false,
