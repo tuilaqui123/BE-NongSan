@@ -2,7 +2,7 @@ const Items = require('../models/items.models')
 const uploadImage = require('../utils/uploadImage.utils')
 
 class ItemsService {
-    static addItem = async (image, { name, price, unitText, unit, description, tag, quantity, procedure, nutrition, preservation }) => {
+    static addItem = async (image, { name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation }) => {
         try {
             const isExist = await Items.findOne({ name }).lean();
             if (isExist) {
@@ -17,7 +17,7 @@ class ItemsService {
 
 
             const newItem = new Items({
-                image: Image, name, price, unitText, unit, description, tag, quantity, procedure, nutrition, preservation
+                image: Image, name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation
             })
             return await newItem.save()
         } catch (error) {
@@ -50,9 +50,9 @@ class ItemsService {
         }
     }
 
-    static updateItem = async ({ id }, { name, price, unitText, unit, description, tag, quantity, procedure, nutrition, preservation }) => {
+    static updateItem = async ({ id }, { name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation }) => {
         try {
-            return await Items.findByIdAndUpdate(id, { name, price, unitText, unit, description, tag, quantity, procedure, nutrition, preservation })
+            return await Items.findByIdAndUpdate(id, { name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation })
         } catch (error) {
             return {
                 success: false,

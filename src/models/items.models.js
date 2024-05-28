@@ -5,28 +5,18 @@ const ItemsSchema = new Schema(
     {
         image: String,
         name: String,
+        type: String,
+        farm: String,
         price: Number,
         unitText: String,
         unit: String,
         description: String,
         tag: Number,
-        quatity: Number,
+        quantity: Number,
         procedure: String,
         nutrition: String,
         preservation: String,
-        purchases: Number,
-        farm: {
-            type: Schema.Types.ObjectId,
-            ref: 'Farms',
-        },
-        type: {
-            type: Schema.Types.ObjectId,
-            ref: 'Types',
-        },
-        comment: {
-            type: Schema.Types.ObjectId,
-            ref: 'Comments',
-        }
+        purchases: Number
     },
     {
         timestamps: true,

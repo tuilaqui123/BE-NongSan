@@ -6,24 +6,16 @@ const OrdersSchema = new Schema(
         total: Number,
         intoMoney: Number,
         date: Date,
+        deliveryStatus: String,
+        paymentStatus: String,
         items: {
             type: Schema.Types.ObjectId,
             ref: 'Items',
         },
         customer: {
-            type: Schema.Types.ObjectId,
-            ref: 'Customer',
-            required: false,
-        },
-        voucher: {
-            type: Schema.Types.ObjectId,
-            ref: 'Vouchers',
-        },
-        deliveryStatus: {
-            type: String
-        },
-        paymentStatus: {
-            type: String
+            name: String,
+            phone: String,
+            address: String
         },
     },
     {
