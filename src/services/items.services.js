@@ -30,7 +30,7 @@ class ItemsService {
 
             const savedItem = await newItem.save()
 
-            await existFarm.updateOne({ $push: {items: savedItem._id}})
+            await existFarm.updateOne({ $push: {items: savedItem._id }})
 
             return savedItem
         } catch (error) {
