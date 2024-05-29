@@ -15,7 +15,6 @@ class FarmService {
             const cloudinaryFolder = 'Fudee/Farm';
             const Image = await uploadImage(image, cloudinaryFolder);
 
-
             const newFarm = new Farms({
                 name, image: Image, email, phone, link, info
             })
@@ -30,7 +29,7 @@ class FarmService {
 
     static getFarm = async () => {
         try {
-            return await Farms.find()
+            return await Farms.find().populate('items')
         } catch (error) {
             return {
                 success: false,
@@ -41,7 +40,15 @@ class FarmService {
 
     static getFarmID = async ({ id }) => {
         try {
-            return await Farms.findById(id)
+            const existFarm = await Farms.findById(id);
+            if (!existFarm){
+                return {
+                    success: false,
+                    message: "Don't exist"
+                }
+            }
+
+            return existFarm
         } catch (error) {
             return {
                 success: false,
@@ -52,7 +59,15 @@ class FarmService {
 
     static updateFarm = async ({ id }, { name, email, phone, link, info }) => {
         try {
-            return await Farms.findByIdAndUpdate(id, { name, email, phone, link, info })
+            const existFarm = await Farms.findByIdAndUpdate(id, { name, email, phone, link, info }, {new: true})
+            if (!existFarm){
+                return {
+                    success: false,
+                    message: "Don't exist"
+                }
+            }
+
+            return existFarm
         } catch (error) {
             return {
                 success: false,
@@ -63,8 +78,18 @@ class FarmService {
 
     static deleteFarm = async ({ id }) => {
         try {
-            console.log(id)
-            return await Farms.findByIdAndDelete(id)
+            const existFarm = await Farms.findByIdAndDelete(id);
+            if (!existFarm){
+                return {
+                    success: false,
+                    message: "Don't exist"
+                }
+            }
+
+            return {
+                success: true,
+                message: "Delete successfully"
+            }
         } catch (error) {
             return {
                 success: false,

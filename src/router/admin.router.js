@@ -36,7 +36,7 @@ router.delete('/vouchers/:id', VouchersController.deleteVoucher)
 //orders
 router.post('/orders', OrdersController.addOrder)
 router.get('/orders', OrdersController.getOrder)
-router.get('/orders/:id', OrdersController.getOrder)
+router.get('/orders/:id', OrdersController.getOrderID)
 router.put('/orders/:id', OrdersController.updateOrder)
 router.delete('/orders/:id', OrdersController.deleteOrder)
 

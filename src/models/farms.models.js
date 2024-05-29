@@ -9,10 +9,12 @@ const FarmsSchema = new Schema(
         phone: String,
         link: String,
         info: String,
-        items: {
-            type: Schema.Types.ObjectId,
-            ref: 'Items',
-        }
+        items: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Items',
+            }
+        ]
     },
     {
         timestamps: true,
