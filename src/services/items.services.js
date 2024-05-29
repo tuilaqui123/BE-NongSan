@@ -1,4 +1,5 @@
 const Items = require('../models/items.models')
+const Farms = require('../models/farms.models')
 const uploadImage = require('../utils/uploadImage.utils')
 
 class ItemsService {
@@ -12,14 +13,25 @@ class ItemsService {
                 }
             }
 
+            const existFarm = await Farms.findById(farm)
+            if (!existFarm) {
+                return {
+                    success: false,
+                    message: "Farm don't exist"
+                }
+            }
             const cloudinaryFolder = 'Fudee/Items';
             const Image = await uploadImage(image, cloudinaryFolder);
-
 
             const newItem = new Items({
                 image: Image, name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation
             })
-            return await newItem.save()
+
+            const savedItem = await newItem.save()
+
+            await existFarm.updateOne({ $push: {items: savedItem._id}})
+
+            return savedItem
         } catch (error) {
             return {
                 success: false,
@@ -30,7 +42,7 @@ class ItemsService {
 
     static getItem = async () => {
         try {
-            return await Items.find()
+            return await Items.find().populate('farm')
         } catch (error) {
             return {
                 success: false,

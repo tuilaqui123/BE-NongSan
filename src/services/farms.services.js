@@ -15,7 +15,6 @@ class FarmService {
             const cloudinaryFolder = 'Fudee/Farm';
             const Image = await uploadImage(image, cloudinaryFolder);
 
-
             const newFarm = new Farms({
                 name, image: Image, email, phone, link, info
             })
@@ -30,7 +29,7 @@ class FarmService {
 
     static getFarm = async () => {
         try {
-            return await Farms.find()
+            return await Farms.find().populate('items')
         } catch (error) {
             return {
                 success: false,
