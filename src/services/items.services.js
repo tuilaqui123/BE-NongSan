@@ -13,13 +13,14 @@ class ItemsService {
                 }
             }
 
-            const existFarm = await Farms.findById(farm)
+            const existFarm = await Farms.findOne({ name: farm });
             if (!existFarm) {
                 return {
                     success: false,
                     message: "Farm don't exist"
                 }
             }
+
             const cloudinaryFolder = 'Fudee/Items';
             const Image = await uploadImage(image, cloudinaryFolder);
 

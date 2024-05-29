@@ -6,10 +6,7 @@ const ItemsSchema = new Schema(
         image: String,
         name: String,
         type: String,
-        farm: {
-            type: Schema.Types.ObjectId,
-            ref: 'Farms',
-        },
+        farm: String,
         price: Number,
         unitText: String,
         unit: String,
