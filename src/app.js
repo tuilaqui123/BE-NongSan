@@ -9,9 +9,4 @@ app.use(cors())
 require('./database/init.mongodb')
 app.use('/', require('./router/admin.router'))
 
-
 module.exports = app;
-
-
-
-

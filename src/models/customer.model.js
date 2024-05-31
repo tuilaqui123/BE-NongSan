@@ -3,16 +3,13 @@ const Schema = mongoose.Schema;
 
 const CustomerSchema = new Schema(
     {
-        name: {
+        email: String,
+        password: {
             type: String,
             required: true,
         },
         avatar: String,
-        email: String,
-        phone: {
-            type: String,
-            required: true,
-        },
+        phone: String,
         address: [{
             type: String,
             isDefault: Boolean,

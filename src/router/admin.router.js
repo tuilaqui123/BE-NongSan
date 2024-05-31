@@ -11,6 +11,9 @@ const FarmController = require('../controllers/farms.controller')
 const ItemsController = require('../controllers/items.controller')
 const VouchersController = require('../controllers/vouchers.controller')
 const OrdersController = require('../controllers/orders.controller')
+const CartController = require('../controllers/cart.controller')
+const AccessController = require('../controllers/access.controller')
+const AuthController = require('../controllers/auth.controller')
 
 //items
 router.post('/items', upload.single('image'), ItemsController.addItem)
@@ -40,5 +43,18 @@ router.get('/orders/:id', OrdersController.getOrderID)
 router.put('/orders/:id', OrdersController.updateOrder)
 router.delete('/orders/:id', OrdersController.deleteOrder)
 router.post('/payment', OrdersController.paymentOrder)
+
+//cart
+router.post('/carts', CartController.addCart)
+router.get('/carts', CartController.getCart)
+
+// signup
+router.post('/signup', AccessController.signUp)
+// login
+router.post('/login', AccessController.login)
+// refresh token
+router.post('/refreshToken', AuthController.handleRefreshToken)
+// logout
+router.post('/logout', AccessController.logout)
 
 module.exports = router

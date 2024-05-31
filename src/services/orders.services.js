@@ -30,12 +30,13 @@ class OrdersServices {
 
             const checkPaymentStatus = method === "cast" ? "Chua thanh toan" : "Da thanh toan"
 
-            var firstPrice = items.reduce((total, item) => {
+            let firstPrice = items.reduce((total, item) => {
                 return total + (item.amount * item.price);
             }, 0);
-
+            
+            let totalPrice = 0;
             if (existVoucher){
-                var totalPrice = (firstPrice*existVoucher.percent)/100; 
+                totalPrice = (firstPrice*existVoucher.percent)/100; 
             }
 
             totalPrice = totalPrice + deliveryFee;
