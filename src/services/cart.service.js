@@ -20,6 +20,7 @@ class CartService {
                     message: "Item don't exist"
                 }
             }
+
             const remainQuantity = existItem.quantity - amount
             await ItemsModels.findByIdAndUpdate(itemId, {$set: {quantity: remainQuantity}})
 
@@ -28,7 +29,7 @@ class CartService {
                 const tempObj = {
                     item: itemId,
                     amount: amount,
-                    price: amount*existItem.price 
+                    price: amount*(existItem.price - existItem.price*existItem.tag)
                 }
                 const newCart = new CartModel({
                     customer: existUser._id,
@@ -44,13 +45,13 @@ class CartService {
                 if (ele.item == itemId){
                     checkNew = false
                     ele.amount += amount
-                    ele.price += amount*existItem.price
+                    ele.price += amount*(existItem.price - existItem.price*existItem.tag)
                     await CartModel.findOneAndUpdate({customer: existUser._id}, {$set: {items: existCart.items}})
                     return existCart.populate('items.item')
                 }
             }
             if (checkNew){
-                const updatedCart = await CartModel.findOneAndUpdate({customer: existUser._id}, {$push: {items: {item: itemId, amount: amount, price: amount*existItem.price}}}, {new: true})
+                const updatedCart = await CartModel.findOneAndUpdate({customer: existUser._id}, {$push: {items: {item: itemId, amount: amount, price: amount*(existItem.price - existItem.price*existItem.tag)}}}, {new: true})
                 return updatedCart.populate('items.item')
             }
         } catch (error) {
@@ -61,9 +62,9 @@ class CartService {
         }
     }
 
-    static getCart = async ({customerId}) => {
+    static getCart = async ({id}) => {
         try {
-            const existCart = await CartModel.findOne({customer: customerId})
+            const existCart = await CartModel.findOne({customer: id})
             if (!existCart) {
                 return {
                     success: false,

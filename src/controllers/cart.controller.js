@@ -11,7 +11,7 @@ class CartController {
 
     getCart = async (req, res, next) => {
         try {
-            return res.status(201).json(await CartService.getCart(req.body))
+            return res.status(201).json(await CartService.getCart(req.params))
         } catch (error) {
             next(error)
         }
