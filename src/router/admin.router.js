@@ -43,7 +43,7 @@ router.get('/orders', OrdersController.getOrder)
 router.get('/orders/:id', OrdersController.getOrderID)
 router.put('/orders/:id', OrdersController.updateOrder)
 router.delete('/orders/:id', OrdersController.deleteOrder)
-router.post('/payment', OrdersController.paymentOrder)
+router.post('/orders/payment', OrdersController.paymentOrder)
 
 //cart
 router.post('/carts', CartController.addCart)
