@@ -48,6 +48,7 @@ router.post('/payment', OrdersController.paymentOrder)
 //cart
 router.post('/carts', CartController.addCart)
 router.get('/carts/:id', CartController.getCart)
+router.delete('/carts/:itemId', CartController.deleteCart)
 
 // signup
 router.post('/signup', AccessController.signUp)

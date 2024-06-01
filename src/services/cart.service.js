@@ -80,6 +80,50 @@ class CartService {
             }
         }
     }
+
+    static deleteCart = async ({customerId, itemId}) => {
+        try {
+            const existUser = await CustomerModel.findById(customerId)
+            if (!existUser) {
+                return {
+                    success: false,
+                    message: "Customer don't exist"
+                }
+            }
+
+            const existItemInCart = await CartModel.findOne({customer: customerId, 'items._id': itemId})
+            if (!existItemInCart){
+                return {
+                    success: false,
+                    message: "Item don't exist in cart"
+                }
+            }
+            let isDeleted = false;
+            const items = existItemInCart.items
+            for (const ele of items){
+                if (itemId === ele._id.toString()){
+                    isDeleted = true;
+                    const existItem = await ItemsModels.findById(ele.item)
+                    const remainQuantity = existItem.quantity + ele.amount
+                    await ItemsModels.findOneAndUpdate({_id: ele.item}, {$set: {quantity: remainQuantity}})
+
+                    const updatedCart = await CartModel.findOneAndUpdate({customer: existUser._id}, {$pull: {items: {_id: itemId}}}, {new: true})
+                    return updatedCart.populate('items.item')
+                }
+            }
+            if (isDeleted === false) {
+                return {
+                    success: false,
+                    message: "Item don't exist in cart"
+                }
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
 }
 
 module.exports = CartService;
