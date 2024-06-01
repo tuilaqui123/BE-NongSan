@@ -25,6 +25,14 @@ class VouchersController {
         }
     }
 
+    getVoucherByName = async (req, res, next) => {
+        try {
+            return res.status(201).json(await VouchersService.getVoucherByName(req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
+
     updateVoucher = async (req, res, next) => {
         try {
             return res.status(201).json(await VouchersService.updateVoucher(req.params, req.body))
