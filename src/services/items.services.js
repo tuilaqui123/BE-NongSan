@@ -64,6 +64,25 @@ class ItemsService {
         }
     }
 
+    static getItemByFarm = async ({name}) => {
+        try {
+            const existFarm = await Farms.findOne({name: name})
+            if (!existFarm) {
+                return {
+                    success: false,
+                    message: "Farm don't exist"
+                }
+            }
+
+            return await Items.find({farm: name})
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
     static updateItem = async ( id, file, { name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation }) => {
         try {
             const existItem = await Items.findById(id)

@@ -18,6 +18,7 @@ const AuthController = require('../controllers/auth.controller')
 //items
 router.post('/items', upload.single('image'), ItemsController.addItem)
 router.get('/items', ItemsController.getItem)
+router.get('/items/farm/:name', ItemsController.getItemByFarm)
 router.get('/items/:id', ItemsController.getItemID)
 router.put('/items/:id', upload.single('image'), ItemsController.updateItem)
 router.delete('/items/:id', ItemsController.deleteItem)

@@ -26,6 +26,14 @@ class ItemsController {
         }
     }
 
+    getItemByFarm = async (req, res, next) => {
+        try {
+            return res.status(201).json(await ItemsService.getItemByFarm(req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
+
     updateItem = async (req, res, next) => {
         try {
             return res.status(201).json(await ItemsService.updateItem(req.params.id, req.file, req.body))
