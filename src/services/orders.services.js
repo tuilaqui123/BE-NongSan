@@ -1,26 +1,37 @@
 const Orders = require('../models/orders.model')
 const Vouchers = require('../models/vouchers.model')
-const Items = require('../models/items.models')
+const ItemsModel = require('../models/items.models')
+const CustomerModel = require('../models/customer.model')
+const CartModel = require('../models/cart.model')
 const getData = require('../utils/formatRes')
 const _ = require('lodash');
 class OrdersServices {
     
-    static addOrder = async ({ deliveryFee, items, customer, voucher, method }) => {
+    static addOrder = async ({ deliveryFee, items, customer, userId, voucher, method, from }) => {
         // method is bank and cast
         try {
+            console.log("from: " + from + ", method: " + method)
             // check exist voucher
             const existVoucher = await Vouchers.findById(voucher)
-            
+
+            const existUser = await CustomerModel.findById(userId)
+            if (!existUser){
+                return {
+                    success: false,
+                    message: "Customer don't exist"
+                }
+            }
+
             // check exist list item
             const results = await Promise.all(
                 items.map(async (ele) => {
-                    const existItem = await Items.findById(ele.item);
+                    const existItem = await ItemsModel.findById(ele.item);
                     return !!existItem;
                 })
             );
-            
+
             const allExistItem = results.every(exist => exist);
-            
+
             if (!allExistItem) {
                 return {
                     success: false,
@@ -28,18 +39,25 @@ class OrdersServices {
                 };
             }
 
-            const checkPaymentStatus = method === "cast" ? "Chua thanh toan" : "Da thanh toan"
+            const checkPaymentStatus = method === "cash" ? "Chua thanh toan" : "Da thanh toan"
 
             let firstPrice = items.reduce((total, item) => {
-                return total + (item.amount * item.price);
+                return total + item.price;
             }, 0);
-            
+
             let totalPrice = 0;
             if (existVoucher){
                 totalPrice = (firstPrice*existVoucher.percent)/100; 
             }
 
             totalPrice = totalPrice + deliveryFee;
+            if (from == "cart"){
+                await CartModel.updateOne({customer: userId}, {$set: {items: []}})
+            }else{
+                const updatedItem = await ItemsModel.findById(items[0].item) 
+                const remainQuantity = updatedItem.quantity - items[0].amount
+                await ItemsModel.findByIdAndUpdate({_id: items[0].item}, {quantity: remainQuantity})
+            }
 
             const newOrder = new Orders({
                 total: totalPrice,
@@ -117,8 +135,9 @@ class OrdersServices {
         }
     }
 
-    static paymentOrder = async ({amount, orderInfo}) => {
+    static paymentOrder = async ({amount, orderInfo, deliveryFee, items, voucher, customer, userId, method, from}) => {
         try {
+            console.log("hahahahaha", items)
             // test momo:
             // NGUYEN VAN A
             // 9704 0000 0000 0018
@@ -129,18 +148,19 @@ class OrdersServices {
             var accessKey = 'F8BBA842ECF85';
             var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';//key để test // không đổi
             var partnerCode = 'MOMO';
-            var redirectUrl = 'http://localhost:5173/login'; // Link chuyển hướng tới sau khi thanh toán hóa đơn
-            var ipnUrl = 'http://localhost:5173/login';   //trang truy vấn kết quả, để trùng với redirect
+            var redirectUrl = 'http://localhost:5173/hoa-don'; // Link chuyển hướng tới sau khi thanh toán hóa đơn
+            var ipnUrl = 'http://localhost:5173/hoa-don';   //trang truy vấn kết quả, để trùng với redirect
             var requestType = "payWithMethod";
             // var amount = '1000'; // Lượng tiền của hóa  <lượng tiền test ko dc cao quá>
             var orderId = partnerCode + new Date().getTime(); // mã Đơn hàng, có thể đổi
             var requestId = orderId;
-            var extraData =''; // đây là data thêm của doanh nghiệp (địa chỉ, mã COD,....)
+            var extraData =`deliveryFee-${deliveryFee}+items-${JSON.stringify(items)}+voucher-${voucher}+customer-${JSON.stringify(customer)}+userId-${userId}+method-${method}+from-${from}`; // đây là data thêm của doanh nghiệp (địa chỉ, mã COD,....)
             var paymentCode = 'T8Qii53fAXyUftPV3m9ysyRhEanUs9KlOPfHgpMR0ON50U10Bh+vZdpJU7VY4z+Z2y77fJHkoDc69scwwzLuW5MzeUKTwPo3ZMaB29imm6YulqnWfTkgzqRaion+EuD7FN9wZ4aXE1+mRt0gHsU193y+yxtRgpmY7SDMU9hCKoQtYyHsfFR5FUAOAKMdw2fzQqpToei3rnaYvZuYaxolprm9+/+WIETnPUDlxCYOiw7vPeaaYQQH0BF0TxyU3zu36ODx980rJvPAgtJzH1gUrlxcSS1HQeQ9ZaVM1eOK/jl8KJm6ijOwErHGbgf/hVymUQG65rHU2MWz9U8QUjvDWA==';
             var orderGroupId ='';
             var autoCapture =true;
             var lang = 'vi'; // ngôn ngữ
-
+            console.log("res==================", extraData)
+            
             // không đụng tới dòng dưới
             var rawSignature = "accessKey=" + accessKey + "&amount=" + amount + "&extraData=" + extraData + "&ipnUrl=" + ipnUrl + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&partnerCode=" + partnerCode + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId + "&requestType=" + requestType;
             //puts raw signature

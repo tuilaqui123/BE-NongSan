@@ -18,8 +18,9 @@ const AuthController = require('../controllers/auth.controller')
 //items
 router.post('/items', upload.single('image'), ItemsController.addItem)
 router.get('/items', ItemsController.getItem)
+router.get('/items/farm/:name', ItemsController.getItemByFarm)
 router.get('/items/:id', ItemsController.getItemID)
-router.put('/items/:id', ItemsController.updateItem)
+router.put('/items/:id', upload.single('image'), ItemsController.updateItem)
 router.delete('/items/:id', ItemsController.deleteItem)
 
 //farms
@@ -43,7 +44,7 @@ router.get('/orders', OrdersController.getOrder)
 router.get('/orders/:id', OrdersController.getOrderID)
 router.put('/orders/:id', OrdersController.updateOrder)
 router.delete('/orders/:id', OrdersController.deleteOrder)
-router.post('/payment', OrdersController.paymentOrder)
+router.post('/orders/payment', OrdersController.paymentOrder)
 
 //cart
 router.post('/carts', CartController.addCart)

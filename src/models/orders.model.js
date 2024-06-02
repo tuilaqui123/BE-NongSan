@@ -31,10 +31,10 @@ const OrdersSchema = new Schema(
             email: String,
             note: String
         },
-        // user: {
-        //     type: Schema.Types.ObjectId,
-        //     ref: 'User',
-        // },
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: 'Customer',
+        },
         voucher: {
             type: Schema.Types.ObjectId,
             ref: 'Vouchers',
