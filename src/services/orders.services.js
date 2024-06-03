@@ -10,7 +10,6 @@ class OrdersServices {
     static addOrder = async ({ deliveryFee, items, customer, userId, voucher, method, from }) => {
         // method is bank and cast
         try {
-            console.log("from: " + from + ", method: " + method)
             // check exist voucher
             const existVoucher = await Vouchers.findById(voucher)
 
@@ -67,12 +66,13 @@ class OrdersServices {
                 deliveryFee,
                 items: items,
                 customer,
+                user: userId,
                 voucher
             })
 
             const savedOrder = newOrder.save()
 
-            return (await (await savedOrder).populate('voucher')).populate('items.item')
+            return (await (await (await savedOrder).populate('voucher')).populate('items.item')).populate('user')
         } catch (error) {
             return {
                 success: false,

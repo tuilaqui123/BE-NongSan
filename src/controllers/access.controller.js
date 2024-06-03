@@ -17,6 +17,30 @@ class AccessController {
         }
     }
 
+    getVerificationCode = async (req, res, next) => {
+        try {
+            return res.status(201).json(await AccessService.getVerificationCode(req.body))
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    checkVerification = async (req, res, next) => {
+        try {
+            return res.status(201).json(await AccessService.checkVerification(req.body))
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    changePassword = async (req, res, next) => {
+        try {
+            return res.status(201).json(await AccessService.changePassword(req.body))
+        } catch (error) {
+            next(error)
+        }
+    }
+
     logout = async (req, res, next) => {
         try {
             return res.status(201).json(await AccessService.logout(req, res))

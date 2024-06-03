@@ -4,14 +4,14 @@ const getData = require('../utils/formatRes');
 
 class AuthService {
     static createAccessToken = (payload) => {
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_KEY, {
+        const accessToken = jwt.sign(payload, "nhutphat456", {
             expiresIn: '30d'
         })
         return accessToken
     }
 
     static createRefreshToken = (payload) => {
-        const refreshToken = jwt.sign( payload, process.env.JWT_SECRET_KEY, {
+        const refreshToken = jwt.sign( payload, "nhutphat123", {
             expiresIn: '30d',
         })
         return refreshToken
@@ -21,7 +21,7 @@ class AuthService {
         const token = req.headers['authorization']
         if (token){
             const accessToken = token.split(" ")[1]
-            jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
+            jwt.verify(accessToken, "nhutphat456", (err, user) => {
                 if (err) {
                     return res.status(403).json({
                         message: 'Invalid token'
@@ -32,7 +32,7 @@ class AuthService {
             })
         }else{
             return res.status(401).json({
-                message: 'You are not authorized to access'   
+                message: 'You are not authorized to access' 
             })
         }
     }
@@ -55,7 +55,7 @@ class AuthService {
                         message: 'You are not authorized to access'   
                     })
                 }
-                jwt.verify(refreshToken, process.env.JWT_SECRET_KEY, (err, user) => {
+                jwt.verify(refreshToken, "nhutphat123", (err, user) => {
                     if (err) {
                         return res.status(403).json({
                             message: 'Invalid token'

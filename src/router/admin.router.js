@@ -15,6 +15,21 @@ const CartController = require('../controllers/cart.controller')
 const AccessController = require('../controllers/access.controller')
 const AuthController = require('../controllers/auth.controller')
 
+// signup
+router.post('/signup', AccessController.signUp)
+// login
+router.post('/login', AccessController.login)
+// get verification code
+router.post('/verification', AccessController.getVerificationCode)
+//check expire verification code
+router.post('/verification/check', AccessController.checkVerification)
+// change password
+router.put('/password/change', AccessController.changePassword)
+// refresh token
+router.post('/refreshToken', AuthController.handleRefreshToken)
+// logout
+router.post('/logout', AccessController.logout)
+
 //items
 router.post('/items', upload.single('image'), ItemsController.addItem)
 router.get('/items', ItemsController.getItem)
@@ -50,14 +65,5 @@ router.post('/orders/payment', OrdersController.paymentOrder)
 router.post('/carts', CartController.addCart)
 router.get('/carts/:id', CartController.getCart)
 router.delete('/carts/:itemId', CartController.deleteCart)
-
-// signup
-router.post('/signup', AccessController.signUp)
-// login
-router.post('/login', AccessController.login)
-// refresh token
-router.post('/refreshToken', AuthController.handleRefreshToken)
-// logout
-router.post('/logout', AccessController.logout)
 
 module.exports = router
