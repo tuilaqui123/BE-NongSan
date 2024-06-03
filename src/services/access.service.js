@@ -295,7 +295,7 @@ class AccessService {
         return {
             message: "Logout successfully"
         }
-    } 
+    }
 }
 
 module.exports = AccessService;
