@@ -41,6 +41,14 @@ class AccessController {
         }
     }
 
+    updateInfo = async (req, res, next) => {
+        try {
+            return res.status(201).json(await AccessService.updateInfo(req.body, req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
+
     logout = async (req, res, next) => {
         try {
             return res.status(201).json(await AccessService.logout(req, res))

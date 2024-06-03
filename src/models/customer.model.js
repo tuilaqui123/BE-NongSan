@@ -8,6 +8,8 @@ const CustomerSchema = new Schema(
             type: String,
             required: true,
         },
+        name: String,
+        birthday: Date,
         avatar: String,
         phone: String,
         address: [{

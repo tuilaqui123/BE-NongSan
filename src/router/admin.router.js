@@ -25,6 +25,8 @@ router.post('/verification', AccessController.getVerificationCode)
 router.post('/verification/check', AccessController.checkVerification)
 // change password
 router.put('/password/change', AccessController.changePassword)
+// update info 
+router.put('/users/update/:userId', AccessController.updateInfo)
 // refresh token
 router.post('/refreshToken', AuthController.handleRefreshToken)
 // logout

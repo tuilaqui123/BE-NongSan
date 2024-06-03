@@ -121,7 +121,7 @@ class AccessService {
 
             return {
                 success: true,
-                user: getData({fields: ['_id','email', 'phone', 'address'], object: existUser}),
+                user: getData({fields: ['_id','email', 'phone', 'address', 'name', 'birthday'], object: existUser}),
                 accessToken: accessToken,
             }
         } catch (error) {
@@ -275,6 +275,30 @@ class AccessService {
                     message: "Failed to update password"
                 };
             }
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
+    static updateInfo = async ({name, phone, email, birthday}, {userId}) => {
+        try {
+            const existUser = await CustomerModel.findById(userId)
+            if (!existUser) {
+                return {
+                    success: false,
+                    message: "User don't exist"
+                }
+            }
+
+            return await CustomerModel.findByIdAndUpdate({_id: userId}, {
+                name: name, 
+                phone: phone, 
+                email: email, 
+                birthday: birthday
+            }, {new: true})
         } catch (error) {
             return {
                 success: false,
