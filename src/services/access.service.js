@@ -320,6 +320,55 @@ class AccessService {
             message: "Logout successfully"
         }
     }
+
+    static contact = async ({name, email, phone, address, text}) => {
+        try {
+            if (email) {
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: "trannhutphattv@gmail.com",
+                        pass: "gltq larm zfkq acgt"
+                    }
+                })
+    
+                var mailoptions = {
+                    from: "trannhutphattv@gmail.com",
+                    to: email,
+                    subject: 'Verification Code - Fudee',
+                    html: `
+                        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                            <h2 style="color: #333;">Cảm ơn bạn đã phản hồi!</h2>
+                            <p style="font-size: 18px; color: #333;">Xin chào ${name},</p>
+                            <p>Xin chào Quý Khách,</p>
+                            <p>Cảm ơn bạn đã dành thời gian để gửi phản hồi quý báu cho chúng tôi. Dưới đây là tóm tắt ý kiến của bạn:</p>
+                            <blockquote style="border-left: 4px solid #ccc; margin: 20px 0; padding-left: 15px; color: #555;">
+                                ${text}
+                            </blockquote>
+                            <p>Chúng tôi rất trân trọng ý kiến của bạn và sẽ sử dụng nó để cải thiện dịch vụ của mình.</p>
+                            <p style="font-size: 16px; color: #333;">
+                                Trân trọng,<br>
+                                The Fudee Team
+                            </p>
+                        </div>
+                    `
+                }
+    
+                transporter.sendMail(mailoptions, function(error, info){
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                }); 
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
 }
 
 module.exports = AccessService;

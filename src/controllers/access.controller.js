@@ -56,6 +56,14 @@ class AccessController {
             next(error)
         }
     }
+
+    contact = async (req, res, next) => {
+        try {
+            return res.status(201).json(await AccessService.contact(req.body))
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 module.exports = new AccessController()

@@ -31,6 +31,8 @@ router.put('/users/update/:userId', AccessController.updateInfo)
 router.post('/refreshToken', AuthController.handleRefreshToken)
 // logout
 router.post('/logout', AccessController.logout)
+// contact
+router.post('/contact', AccessController.contact)
 
 //items
 router.post('/items', upload.single('image'), ItemsController.addItem)
