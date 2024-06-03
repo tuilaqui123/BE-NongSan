@@ -66,10 +66,12 @@ class CartService {
         try {
             const existCart = await CartModel.findOne({customer: id})
             if (!existCart) {
-                return {
-                    success: false,
-                    message: "Cart don't exist"
-                }
+                const newCart = new CartModel({
+                    customer: id,
+                    items: []
+                })
+                const savedNewCart = newCart.save()
+                return (await savedNewCart).populate('items.item')
             }
 
             return existCart.populate('items.item')
