@@ -41,6 +41,14 @@ class OrdersController {
             next(error)
         }
     }
+
+    paymentOrder = async (req, res, next) => {
+        try {
+            return res.status(201).json(await OrdersServices.paymentOrder(req.body))
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 module.exports = new OrdersController()

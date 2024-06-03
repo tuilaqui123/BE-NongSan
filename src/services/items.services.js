@@ -1,6 +1,7 @@
 const Items = require('../models/items.models')
 const Farms = require('../models/farms.models')
 const uploadImage = require('../utils/uploadImage.utils')
+const deleteImage = require('../utils/deleteImage.utils')
 
 class ItemsService {
     static addItem = async (image, { name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation }) => {
@@ -30,7 +31,7 @@ class ItemsService {
 
             const savedItem = await newItem.save()
 
-            await existFarm.updateOne({ $push: {items: savedItem._id}})
+            await existFarm.updateOne({ $push: {items: savedItem._id }})
 
             return savedItem
         } catch (error) {
@@ -63,9 +64,81 @@ class ItemsService {
         }
     }
 
-    static updateItem = async ({ id }, { name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation }) => {
+    static getItemByFarm = async ({name}) => {
         try {
-            return await Items.findByIdAndUpdate(id, { name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation })
+            const existFarm = await Farms.findOne({name: name})
+            if (!existFarm) {
+                return {
+                    success: false,
+                    message: "Farm don't exist"
+                }
+            }
+
+            return await Items.find({farm: name})
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
+    static updateItem = async ( id, file, { name, price, type, farm, unitText, unit, description, tag, quantity, procedure, nutrition, preservation }) => {
+        try {
+            const existItem = await Items.findById(id)
+            if (!existItem) {
+                return {
+                    success: false,
+                    message: "Item don't exist"
+                }
+            }
+            if (file){
+                // add new image
+                const cloudinaryFolder = 'Fudee/Items';
+                const Image = await uploadImage(file.path, cloudinaryFolder);
+                const data = {
+                    image: Image,
+                    name,
+                    price,
+                    type,
+                    farm,
+                    unitText,
+                    unit,
+                    description,
+                    tag,
+                    quantity,
+                    procedure,
+                    nutrition,
+                    preservation
+                }
+                // delete old image
+                const deleteImageUrl = existItem.image
+                const linkArr = deleteImageUrl.split('/')
+                const imgName = linkArr[linkArr.length - 1]
+                const imgID = imgName.split('.')[0]
+                const stringImg = 'Fudee/Items/' + imgID
+                await deleteImage(stringImg)
+                // update new image
+                return await Items.findByIdAndUpdate(id, data, {new: true})
+            }else{
+                const data = {
+                    image: existItem.image,
+                    name,
+                    price,
+                    type,
+                    farm,
+                    unitText,
+                    unit,
+                    description,
+                    tag,
+                    quantity,
+                    procedure,
+                    nutrition,
+                    preservation
+                }
+                // get old image
+                return await Items.findByIdAndUpdate(id, data, {new: true})
+            }
         } catch (error) {
             return {
                 success: false,

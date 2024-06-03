@@ -45,6 +45,25 @@ class VouchersService {
         }
     }
 
+    static getVoucherByName = async ({name}) => {
+        try {
+            const existVoucher = await Vouchers.findOne({name: name})
+            if (!existVoucher) {
+                return {
+                    success: false,
+                    message: "Voucher don't exist"
+                }
+            }
+
+            return existVoucher
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
     static updateVoucher = async ({ id }, { name, conditionText, conditionValue, percent, quantity, date }) => {
         try {
             return await Vouchers.findByIdAndUpdate(id, { name, conditionText, conditionValue, percent, quantity, date })
