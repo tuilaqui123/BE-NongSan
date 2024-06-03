@@ -26,6 +26,14 @@ class OrdersController {
         }
     }
 
+    getOrdersByUserId = async (req, res, next) => {
+        try {
+            return res.status(201).json(await OrdersServices.getOrdersByUserId(req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
+
     updateOrder = async (req, res, next) => {
         try {
             return res.status(201).json(await OrdersServices.updateOrder(req.params))

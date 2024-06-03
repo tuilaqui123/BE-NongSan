@@ -135,6 +135,24 @@ class OrdersServices {
         }
     }
 
+    static getOrdersByUserId = async ({userId}) => {
+        try {
+            const existUser = await CustomerModel.findById(userId)
+            if (!existUser) {
+                return {
+                    success: false,
+                    message: "Customer don't exist"
+                }
+            }
+            return await Orders.find({user: userId})
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
     static paymentOrder = async ({amount, orderInfo, deliveryFee, items, voucher, customer, userId, method, from}) => {
         try {
             console.log("hahahahaha", items)
