@@ -63,14 +63,19 @@ router.post('/orders/noAccount/:itemId', OrdersController.addOrderNoAccount)
 router.get('/orders', OrdersController.getOrder)
 router.get('/orders/:id', OrdersController.getOrderID)
 router.get('/orders/users/:userId', OrdersController.getOrdersByUserId)
+// router.get('/orders/shipping/:userId', OrdersController.getOrdersShipping)
 router.put('/orders/:id', OrdersController.updateOrder)
 router.delete('/orders/:id', OrdersController.deleteOrder)
 router.delete('/ordersAnonymus', OrdersController.deleteOrderNoAccount)
 router.post('/orders/payment', OrdersController.paymentOrder)
+router.put('/changeStatus/:id', OrdersController.changeStatus)
 
 //cart
 router.post('/carts', CartController.addCart)
 router.get('/carts/:id', CartController.getCart)
 router.delete('/carts/:itemId', CartController.deleteCart)
+
+//adim
+router.get('/customers', AccessController.getCustomers)
 
 module.exports = router

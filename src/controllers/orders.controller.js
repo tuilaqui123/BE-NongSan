@@ -73,6 +73,13 @@ class OrdersController {
             next(error)
         }
     }
+    changeStatus = async (req, res) => {
+        try {
+            return res.status(201).json(await OrdersServices.changeStatus(req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 module.exports = new OrdersController()
