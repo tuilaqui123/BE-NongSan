@@ -65,6 +65,7 @@ router.get('/orders/:id', OrdersController.getOrderID)
 router.get('/orders/users/:userId', OrdersController.getOrdersByUserId)
 router.put('/orders/:id', OrdersController.updateOrder)
 router.delete('/orders/:id', OrdersController.deleteOrder)
+router.delete('/ordersAnonymus', OrdersController.deleteOrderNoAccount)
 router.post('/orders/payment', OrdersController.paymentOrder)
 
 //cart
