@@ -25,10 +25,14 @@ router.post('/verification', AccessController.getVerificationCode)
 router.post('/verification/check', AccessController.checkVerification)
 // change password
 router.put('/password/change', AccessController.changePassword)
+// update info 
+router.put('/users/update/:userId', AccessController.updateInfo)
 // refresh token
 router.post('/refreshToken', AuthController.handleRefreshToken)
 // logout
 router.post('/logout', AccessController.logout)
+// contact
+router.post('/contact', AccessController.contact)
 
 //items
 router.post('/items', upload.single('image'), ItemsController.addItem)
@@ -57,6 +61,7 @@ router.delete('/vouchers/:id', VouchersController.deleteVoucher)
 router.post('/orders', OrdersController.addOrder)
 router.get('/orders', OrdersController.getOrder)
 router.get('/orders/:id', OrdersController.getOrderID)
+router.get('/orders/users/:userId', OrdersController.getOrdersByUserId)
 router.put('/orders/:id', OrdersController.updateOrder)
 router.delete('/orders/:id', OrdersController.deleteOrder)
 router.post('/orders/payment', OrdersController.paymentOrder)
