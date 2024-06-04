@@ -18,6 +18,14 @@ class OrdersController {
         }
     }
 
+    deleteOrderNoAccount = async (req, res, next) => {
+        try {
+            return res.status(201).json(await OrdersServices.deleteOrderNoAccount(req.query))
+        } catch (error) {
+            next(error)
+        }
+    }
+
     getOrder = async (req, res, next) => {
         try {
             return res.status(201).json(await OrdersServices.getOrder())

@@ -126,6 +126,28 @@ class OrdersServices {
         }
     }
 
+    static deleteOrderNoAccount = async ({itemId, amount}) => {
+        try {
+            const existItem = await ItemsModel.findById(itemId)
+            if (!existItem) {
+                return {
+                    success: false,
+                    message: "Item don't exist"
+                }
+            }
+            const remainQuantity = Number(existItem.quantity) - Number(amount)
+            return {
+                item: await ItemsModel.findByIdAndUpdate(existItem._id, {quantity: remainQuantity}, {new: true}),
+                amount: amount
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
     static getOrder = async () => {
         try {
             const orders = await Orders.find({})
