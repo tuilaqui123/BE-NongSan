@@ -81,6 +81,29 @@ class OrdersServices {
         }
     }
 
+    static addOrderNoAccount = async ({quantity}, {itemId}) => {
+        try {
+            const existItem = await ItemsModel.findById(itemId)
+            if (!existItem) {
+                return {
+                    success: false,
+                    message: "Item don't exist"
+                }
+            }
+            const remainQuantity = existItem.quantity - quantity
+
+            return {
+                item: await ItemsModel.findByIdAndUpdate(existItem._id, {quantity: remainQuantity}, {new: true}),
+                amount: quantity
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
     static updateOrder = async ({ id }) => {
         try {
             return await Orders.findByIdAndUpdate({ id }, { total, intoMoney, date, deliveryStatus, paymentStatus })
