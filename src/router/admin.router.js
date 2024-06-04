@@ -59,6 +59,7 @@ router.delete('/vouchers/:id', VouchersController.deleteVoucher)
 
 //orders
 router.post('/orders', OrdersController.addOrder)
+router.post('/orders/noAccount/:itemId', OrdersController.addOrderNoAccount)
 router.get('/orders', OrdersController.getOrder)
 router.get('/orders/:id', OrdersController.getOrderID)
 router.get('/orders/users/:userId', OrdersController.getOrdersByUserId)

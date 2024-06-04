@@ -10,6 +10,14 @@ class OrdersController {
         }
     }
 
+    addOrderNoAccount = async (req, res, next) => {
+        try {
+            return res.status(201).json(await OrdersServices.addOrderNoAccount(req.body, req.params))
+        } catch (error) {
+            next(error)
+        }
+    }
+
     getOrder = async (req, res, next) => {
         try {
             return res.status(201).json(await OrdersServices.getOrder())
