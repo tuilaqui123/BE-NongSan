@@ -63,6 +63,7 @@ class OrdersServices {
                 intoMoney: firstPrice,
                 deliveryStatus: "Dang van chuyen",
                 paymentStatus: checkPaymentStatus,
+                paymentMethod: method,
                 deliveryFee,
                 items: items,
                 customer,
@@ -115,6 +116,27 @@ class OrdersServices {
         }
     }
 
+    static changeStatus = async ({id}) => {
+        try {
+            const existOrder = await Orders.findById(id)
+            if (!existOrder) {
+                return {
+                    success: false,
+                    message: "Order don't exist"
+                }
+            }
+            if (existOrder.deliveryStatus === 'Dang van chuyen'){
+                return await Orders.findByIdAndUpdate( existOrder._id, { deliveryStatus: "Đã hoàn thành" })
+            }
+            return existOrder
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
     static deleteOrder = async ({ id }) => {
         try {
             return await Orders.findByIdAndDelete(id)
@@ -151,7 +173,7 @@ class OrdersServices {
     static getOrder = async () => {
         try {
             const orders = await Orders.find({})
-                        .populate("voucher").populate('items.item')
+                        .populate("voucher").populate('items.item').populate('user')
             return orders;
         } catch (error) {
             return {
@@ -189,7 +211,7 @@ class OrdersServices {
                     message: "Customer don't exist"
                 }
             }
-            return await Orders.find({user: userId})
+            return await Orders.find({user: userId}).populate('items.item')
         } catch (error) {
             return {
                 success: false,

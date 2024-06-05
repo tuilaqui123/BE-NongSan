@@ -8,6 +8,7 @@ const OrdersSchema = new Schema(
         deliveryFee: Number,
         deliveryStatus: String,
         paymentStatus: String,
+        paymentMethod: String,
         items: [
             {
                 item: {

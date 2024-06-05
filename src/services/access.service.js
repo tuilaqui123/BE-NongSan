@@ -5,7 +5,9 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken')
 const getData = require('../utils/formatRes');
-const AuthService = require('./auth.service')
+const AuthService = require('./auth.service');
+const customerModel = require('../models/customer.model');
+const ordersModel = require('../models/orders.model');
 
 const generateVerificationCode = () => {
     return Math.floor(100000 + Math.random() * 900000);
@@ -375,6 +377,37 @@ class AccessService {
                     message: "Send email failed"
                 }
             }
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            }
+        }
+    }
+
+    static getCustomers = async () => {
+        try {
+            const customers = await CustomerModel.find({})
+            const orders = await ordersModel.find({}).populate('user')
+            let customerTotals = customers.map((customer) => {
+                return {
+                    customer,
+                    totalIntoMoney: 0,
+                }
+            })
+            let customerLookup = {};
+            customerTotals.forEach(customer => {
+                customerLookup[customer.customer.email] = customer;
+            });
+
+            orders.forEach(order => {
+                console.log(order.user.email)
+                let customerEmail = order.user.email;
+                if (customerLookup.hasOwnProperty(customerEmail)) {
+                    customerLookup[customerEmail].totalIntoMoney += order.intoMoney;
+                }
+            });
+            return customerTotals;
         } catch (error) {
             return {
                 success: false,
