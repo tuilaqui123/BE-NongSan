@@ -157,7 +157,7 @@ class OrdersServices {
                     message: "Item don't exist"
                 }
             }
-            const remainQuantity = Number(existItem.quantity) - Number(amount)
+            const remainQuantity = Number(existItem.quantity) + Number(amount)
             return {
                 item: await ItemsModel.findByIdAndUpdate(existItem._id, {quantity: remainQuantity}, {new: true}),
                 amount: amount
