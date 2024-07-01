@@ -387,7 +387,15 @@ class AccessService {
 
     static getCustomers = async () => {
         try {
-            const customers = await CustomerModel.find({})
+            const customers = await CustomerModel.find()
+            
+            if (!customers.length){
+                return {
+                    sucess: false,
+                    message: "No customer found"
+                }
+            }
+
             const orders = await ordersModel.find({}).populate('user')
             let customerTotals = customers.map((customer) => {
                 return {
@@ -395,19 +403,18 @@ class AccessService {
                     totalIntoMoney: 0,
                 }
             })
-            let customerLookup = {};
-            customerTotals.forEach(customer => {
-                customerLookup[customer.customer.email] = customer;
-            });
 
+            let customerLookup = {}
+            customerTotals.forEach(customer => {
+                customerLookup[customer.customer.email] = customer
+            });
             orders.forEach(order => {
-                console.log(order.user.email)
-                let customerEmail = order.user.email;
+                let customerEmail = order.customer.email
                 if (customerLookup.hasOwnProperty(customerEmail)) {
-                    customerLookup[customerEmail].totalIntoMoney += order.intoMoney;
+                    customerLookup[customerEmail].totalIntoMoney += order.intoMoney
                 }
             });
-            return customerTotals;
+            return customerTotals
         } catch (error) {
             return {
                 success: false,
