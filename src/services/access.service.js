@@ -401,8 +401,7 @@ class AccessService {
             });
 
             orders.forEach(order => {
-                console.log(order.user.email)
-                let customerEmail = order.user.email;
+                let customerEmail = order.customer.email;
                 if (customerLookup.hasOwnProperty(customerEmail)) {
                     customerLookup[customerEmail].totalIntoMoney += order.intoMoney;
                 }
