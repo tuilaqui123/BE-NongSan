@@ -7,13 +7,13 @@ multer({
     limits: { fieldSize: 25 * 1024 * 1024 }
 })
 
-const FarmController = require('../controllers/farms.controller')
-const ItemsController = require('../controllers/items.controller')
-const VouchersController = require('../controllers/vouchers.controller')
-const OrdersController = require('../controllers/orders.controller')
-const CartController = require('../controllers/cart.controller')
-const AccessController = require('../controllers/access.controller')
-const AuthController = require('../controllers/auth.controller')
+const FarmController = require('../../controllers/farms.controller')
+const ItemsController = require('../../controllers/items.controller')
+const VouchersController = require('../../controllers/vouchers.controller')
+const OrdersController = require('../../controllers/orders.controller')
+const CartController = require('../../controllers/cart.controller')
+const AccessController = require('../../controllers/access.controller')
+const AuthController = require('../../controllers/auth.controller')
 
 // signup
 router.post('/signup', AccessController.signUp)
