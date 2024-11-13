@@ -44,7 +44,8 @@ class ItemsService {
 
     static getItem = async () => {
         try {
-            return await Items.find().populate('farm')
+            // return await Items.find().populate('farm')
+            return 123;
         } catch (error) {
             return {
                 success: false,
