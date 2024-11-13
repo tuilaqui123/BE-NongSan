@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 const getData = require('../utils/formatRes');
 const AuthService = require('./auth.service');
 const customerModel = require('../models/customer.model');
-const ordersModel = require('../models/orders.model');
+const ordersModel = require('../models/order.model');
 
 const generateVerificationCode = () => {
     return Math.floor(100000 + Math.random() * 900000);

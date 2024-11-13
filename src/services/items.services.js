@@ -1,4 +1,4 @@
-const Items = require('../models/items.models')
+const Items = require('../models/product.model')
 const Farms = require('../models/farms.models')
 const uploadImage = require('../utils/uploadImage.utils')
 const deleteImage = require('../utils/deleteImage.utils')

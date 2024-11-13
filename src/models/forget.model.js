@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ForgetSchema = new Schema(
+const DOCUMENT_NAME = 'Forget'
+const COLLECTION_NAME = 'Forgets'
+
+const forgetSchema = new Schema(
     {
-        user: {
+        userId: {
             type: Schema.Types.ObjectId,
-            ref: 'Customer',
+            ref: 'User',
         },
         verificationCode: {
             type: String,
@@ -18,7 +21,8 @@ const ForgetSchema = new Schema(
     },
     {
         timestamps: true,
+        collection: COLLECTION_NAME,
     }
 );
 
-module.exports = mongoose.model('Forget', ForgetSchema);
+module.exports = mongoose.model(DOCUMENT_NAME, forgetSchema);
