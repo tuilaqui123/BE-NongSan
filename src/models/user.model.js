@@ -6,8 +6,7 @@ const COLLECTION_NAME = 'Users'
 var userSchema = new Schema({
     name: {
         type: String,
-        required: true,
-        unique:true,
+        require: true,
         trim: true
     },
     email:{
@@ -25,8 +24,8 @@ var userSchema = new Schema({
         trim: true,
         unique: true,
         validate: {
-            validator: function(value) {
-                return /^\+?[1-9]\d{1,14}$/.test(value);
+            validator: (value) => {
+                return /(84|0[3|5|7|8|9])+([0-9]{8})\b/g.test(value);
             },
             message: (props) => `${props.value} is not a valid phone number!`
         }

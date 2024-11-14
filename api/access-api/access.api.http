@@ -5,9 +5,9 @@ POST {{url_api}}/signup
 Content-Type: application/json
 
 {
-    "name": "johndoe",
-    "email": "johndoe@example.com",
+    "name": "oke1",
+    "email": "trannhutphattv@gmail.com",
     "address": "HCM",
-    "phone": "0911111111",
+    "phone": "0393372222",
     "password": "password123"
 }

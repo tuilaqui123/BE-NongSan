@@ -7,7 +7,8 @@ const getData = require('../utils/formatRes');
 const AuthService = require('./auth.service');
 const userModel = require('../models/user.model');
 const ordersModel = require('../models/order.model');
-const {InternalServerError, BadRequestError} = require('../utils/error.response')
+const {InternalServerError, BadRequestError, ConflictRequestError} = require('../utils/error.response')
+const isDisposableEmail = require('../utils/checkValidEmail')
 
 const generateVerificationCode = () => {
     return Math.floor(100000 + Math.random() * 900000);
@@ -17,12 +18,28 @@ class AccessService {
     // [POST]/v1/api/signup
     static signup = async({name, email, address, phone, password}) => {
        try {
+            // check invalid/disposable email
+            const isValidEmail = await isDisposableEmail(email)
+            if (isValidEmail) {
+                return new BadRequestError('Disposable email is not allowed')
+            }
+
+            // check duplicate email
+            const existEmail = await userModel.findOne({email: email}).lean()
+            if (existEmail) {
+                return new ConflictRequestError('Email already exists')
+            }
+
+            // check duplicate phone
+            const existPhone = await userModel.findOne({phone: phone}).lean()
+            if (existPhone) {
+                return new ConflictRequestError('Phone already exists')
+            }
+
+            // check exist user
             const existUser = await userModel.findOne({ $and: [{email: email}, {phone: phone}] }).lean()
             if (existUser) {
-                return {
-                    statusCode: 201,
-                    message: "User already exists"
-                }
+                return new ConflictRequestError('User already exists')
             }
 
             const salt = await bcrypt.genSalt()
@@ -36,56 +53,55 @@ class AccessService {
                 "password": passwordHash,
             })
 
-            return newUser
-            // if (email) {
-            //     var transporter = nodemailer.createTransport({
-            //         service: 'gmail',
-            //         auth: {
-            //             user: "trannhutphattv@gmail.com",
-            //             pass: "gltq larm zfkq acgt"
-            //         }
-            //     })
+            if (email) {
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: "trannhutphattv@gmail.com",
+                        pass: "eewp zlsq mzed woej"
+                    }
+                })
     
-            //     var mailoptions = {
-            //         from: "trannhutphattv@gmail.com",
-            //         to: newUser.email,
-            //         subject: 'Password Reset Verification Code - Fudee',
-            //         html: `
-            //             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-            //                 <h2 style="color: #4CAF50; text-align: center;">Welcome to Fudee!</h2>
-            //                 <p style="font-size: 18px; color: #333;">Xin chào bạn,</p>
-            //                 <p style="font-size: 16px; color: #333;">
-            //                     Chúng tôi rất vui mừng khi có bạn tham gia. Bạn đã đăng ký tài khoản thành công với Fudee.
-            //                 </p>
-            //                 <div style="text-align: center; margin: 20px 0;">
-            //                     <img src="https://static.vecteezy.com/system/resources/previews/000/417/713/original/text-thank-you-on-green-background-calligraphy-lettering-vector-illustration-eps10.jpg" alt="Thank You" style="max-width: 50%; max-height: 100px; border-radius: 10px;">
-            //                 </div>
-            //                 <p style="font-size: 16px; color: #333;">
-            //                     Hãy khám phá các tính năng của chúng tôi và tận hưởng trải nghiệm mua sắm tốt nhất.
-            //                 </p>
-            //                 <p style="font-size: 16px; color: #333;">
-            //                     Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại <a href="mailto:trannhutphattv@gmail.com" style="color: #4CAF50;">liên hệ với chúng tôi</a>.
-            //                 </p>
-            //                 <p style="font-size: 16px; color: #333;">
-            //                     Trân trọng,<br>
-            //                     The Fudee Team
-            //                 </p>
-            //             </div>
-            //         `
-            //     }
+                var mailoptions = {
+                    from: "trannhutphattv@gmail.com",
+                    to: newUser.email,
+                    subject: 'Sign up Successfully - Coffee Shop',
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+                            <h2 style="color: #4CAF50; text-align: center;">Welcome to Coffee Shop!</h2>
+                            <p style="font-size: 18px; color: #333;">Xin chào bạn,</p>
+                            <p style="font-size: 16px; color: #333;">
+                                Chúng tôi rất vui mừng khi có bạn tham gia. Bạn đã đăng ký tài khoản thành công với Coffee Shop.
+                            </p>
+                            <div style="text-align: center; margin: 20px 0;">
+                                <img src="https://static.vecteezy.com/system/resources/previews/000/417/713/original/text-thank-you-on-green-background-calligraphy-lettering-vector-illustration-eps10.jpg" alt="Thank You" style="max-width: 50%; max-height: 100px; border-radius: 10px;">
+                            </div>
+                            <p style="font-size: 16px; color: #333;">
+                                Hãy khám phá các tính năng của chúng tôi và tận hưởng trải nghiệm mua sắm tốt nhất.
+                            </p>
+                            <p style="font-size: 16px; color: #333;">
+                                Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại <a href="mailto:trannhutphattv@gmail.com" style="color: #4CAF50;">liên hệ với chúng tôi</a>.
+                            </p>
+                            <p style="font-size: 16px; color: #333;">
+                                Trân trọng,<br>
+                                The Coffee Shop Team
+                            </p>
+                        </div>
+                    `
+                }
     
-            //     transporter.sendMail(mailoptions, function(error, info){
-            //         if (error) {
-            //             console.log(error);
-            //         } else {
-            //             console.log('Email sent: ' + info.response);
-            //         }
-            //     });
-            // }
-            // return {
-            //     success: true,
-            //     user: getData({ fields: ['_id', (email ? 'email' : 'phone')], object: newUser})
-            // }
+                transporter.sendMail(mailoptions, function(error, info){
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
+            }
+            return {
+                success: true,
+                user: getData({ fields: ['_id', (email ? 'email' : 'phone')], object: newUser})
+            }
        } catch (error) {
             // Validation Error
             if (error.name === 'ValidationError') {
