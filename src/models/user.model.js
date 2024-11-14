@@ -11,6 +11,7 @@ var userSchema = new Schema({
     },
     email:{
         type: String,
+        required: true,
         unique: true,
         trim: true
     },
@@ -22,6 +23,7 @@ var userSchema = new Schema({
     phone: {
         type: String,
         trim: true,
+        required: true,
         unique: true,
         validate: {
             validator: (value) => {
@@ -34,7 +36,7 @@ var userSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        minLength: 6
+        minlength: 6
     },
 }, {
     timestamps: true,

@@ -8,7 +8,9 @@ const AuthService = require('./auth.service');
 const userModel = require('../models/user.model');
 const ordersModel = require('../models/order.model');
 const {InternalServerError, BadRequestError, ConflictRequestError} = require('../utils/error.response')
-const isDisposableEmail = require('../utils/checkValidEmail')
+const isInvalidEmail = require('../utils/checkValidEmail')
+
+const MIN_PASSWORD_LENGTH = 6
 
 const generateVerificationCode = () => {
     return Math.floor(100000 + Math.random() * 900000);
@@ -19,11 +21,11 @@ class AccessService {
     static signup = async({name, email, address, phone, password}) => {
        try {
             // check invalid/disposable email
-            const isValidEmail = await isDisposableEmail(email)
-            if (isValidEmail) {
-                return new BadRequestError('Disposable email is not allowed')
+            const checkEmail = await isInvalidEmail(email)
+            if (checkEmail) {
+                return new BadRequestError('Disposable or Invalid email is not allowed')
             }
-
+            
             // check duplicate email
             const existEmail = await userModel.findOne({email: email}).lean()
             if (existEmail) {
@@ -36,10 +38,8 @@ class AccessService {
                 return new ConflictRequestError('Phone already exists')
             }
 
-            // check exist user
-            const existUser = await userModel.findOne({ $and: [{email: email}, {phone: phone}] }).lean()
-            if (existUser) {
-                return new ConflictRequestError('User already exists')
+            if (password.length < MIN_PASSWORD_LENGTH) {
+                return new BadRequestError('Password must be at least 6 characters long')
             }
 
             const salt = await bcrypt.genSalt()
@@ -100,7 +100,7 @@ class AccessService {
             }
             return {
                 success: true,
-                user: getData({ fields: ['_id', (email ? 'email' : 'phone')], object: newUser})
+                user: getData({ fields: ['_id', 'name', 'email', 'address', 'phone'], object: newUser})
             }
        } catch (error) {
             // Validation Error
@@ -122,7 +122,7 @@ class AccessService {
     // [POST]/v1/api/login
     static login = async({email, password}, res) => {
         try {
-            const existUser = await CustomerModel.findOne({email})
+            const existUser = await userModel.findOne({email})
             if (!existUser) {
                 return {
                     success: false,
