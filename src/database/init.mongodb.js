@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const connectString = "mongodb+srv://quidhtv0149:vxt4Mbdkeal0MIE6@cluster0.ugxi4ku.mongodb.net/NongSan-Fudee"
+const connectString = "mongodb+srv://phat:phat1516@db-coffeeshop.ipacg.mongodb.net/?retryWrites=true&w=majority&appName=DB-CoffeeShop"
 
 class Database {
     constructor() {

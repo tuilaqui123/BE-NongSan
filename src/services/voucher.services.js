@@ -1,4 +1,4 @@
-const Vouchers = require('../models/vouchers.model')
+const Vouchers = require('../models/voucher.model')
 
 class VouchersService {
     static addVoucher = async ({ name, conditionText, conditionValue, percent, quantity, date }) => {

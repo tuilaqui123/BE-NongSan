@@ -1,4 +1,3 @@
-const CustomerModel = require('../models/customer.model')
 const ForgetModel = require('../models/forget.model')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto');
@@ -6,8 +5,12 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken')
 const getData = require('../utils/formatRes');
 const AuthService = require('./auth.service');
-const customerModel = require('../models/customer.model');
-const ordersModel = require('../models/orders.model');
+const userModel = require('../models/user.model');
+const ordersModel = require('../models/order.model');
+const {InternalServerError, BadRequestError, ConflictRequestError} = require('../utils/error.response')
+const isInvalidEmail = require('../utils/checkValidEmail')
+
+const MIN_PASSWORD_LENGTH = 6
 
 const generateVerificationCode = () => {
     return Math.floor(100000 + Math.random() * 900000);
@@ -15,43 +18,60 @@ const generateVerificationCode = () => {
 
 class AccessService {
     // [POST]/v1/api/signup
-    static signup = async({email, password, phone}) => {
+    static signup = async({name, email, address, phone, password}) => {
        try {
-            const existUser = await CustomerModel.findOne({ $and: [{email: email}, {phone: phone}] })
-            if (existUser) {
-                return {
-                    statusCode: 201,
-                    message: "User already exists"
-                }
+            // check invalid/disposable email
+            const checkEmail = await isInvalidEmail(email)
+            if (checkEmail) {
+                return new BadRequestError('Disposable or Invalid email is not allowed')
+            }
+            
+            // check duplicate email
+            const existEmail = await userModel.findOne({email: email}).lean()
+            if (existEmail) {
+                return new ConflictRequestError('Email already exists')
+            }
+
+            // check duplicate phone
+            const existPhone = await userModel.findOne({phone: phone}).lean()
+            if (existPhone) {
+                return new ConflictRequestError('Phone already exists')
+            }
+
+            if (password.length < MIN_PASSWORD_LENGTH) {
+                return new BadRequestError('Password must be at least 6 characters long')
             }
 
             const salt = await bcrypt.genSalt()
             const passwordHash = await bcrypt.hash(password, salt)
-            
-            const newUser = await CustomerModel.create({
-                email: (email ? email : null),
-                password: passwordHash,
-                phone: (phone ? phone : null),
+
+            const newUser = await userModel.create({
+                "name": name,
+                "email": email || null,
+                "address": address,
+                "phone": phone || null,
+                "password": passwordHash,
             })
+
             if (email) {
                 var transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
                         user: "trannhutphattv@gmail.com",
-                        pass: "gltq larm zfkq acgt"
+                        pass: "eewp zlsq mzed woej"
                     }
                 })
     
                 var mailoptions = {
                     from: "trannhutphattv@gmail.com",
                     to: newUser.email,
-                    subject: 'Password Reset Verification Code - Fudee',
+                    subject: 'Sign up Successfully - Coffee Shop',
                     html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-                            <h2 style="color: #4CAF50; text-align: center;">Welcome to Fudee!</h2>
+                            <h2 style="color: #4CAF50; text-align: center;">Welcome to Coffee Shop!</h2>
                             <p style="font-size: 18px; color: #333;">Xin chào bạn,</p>
                             <p style="font-size: 16px; color: #333;">
-                                Chúng tôi rất vui mừng khi có bạn tham gia. Bạn đã đăng ký tài khoản thành công với Fudee.
+                                Chúng tôi rất vui mừng khi có bạn tham gia. Bạn đã đăng ký tài khoản thành công với Coffee Shop.
                             </p>
                             <div style="text-align: center; margin: 20px 0;">
                                 <img src="https://static.vecteezy.com/system/resources/previews/000/417/713/original/text-thank-you-on-green-background-calligraphy-lettering-vector-illustration-eps10.jpg" alt="Thank You" style="max-width: 50%; max-height: 100px; border-radius: 10px;">
@@ -64,7 +84,7 @@ class AccessService {
                             </p>
                             <p style="font-size: 16px; color: #333;">
                                 Trân trọng,<br>
-                                The Fudee Team
+                                The Coffee Shop Team
                             </p>
                         </div>
                     `
@@ -80,19 +100,29 @@ class AccessService {
             }
             return {
                 success: true,
-                user: getData({ fields: ['_id', (email ? 'email' : 'phone')], object: newUser})
+                user: getData({ fields: ['_id', 'name', 'email', 'address', 'phone'], object: newUser})
             }
        } catch (error) {
-            return {
-                error: true,
-                message: "Internal Server Error"
+            // Validation Error
+            if (error.name === 'ValidationError') {
+                const errors = Object.values(error.errors).map(key => ({
+                    field: key.path,
+                    message: key.message
+                }))
+
+                return {
+                    type: new BadRequestError('Validation Error', 400),
+                    errors: errors
+                }
             }
+            // Internal Server Error
+            throw new InternalServerError(error.message)
        }
     }
     // [POST]/v1/api/login
     static login = async({email, password}, res) => {
         try {
-            const existUser = await CustomerModel.findOne({email})
+            const existUser = await userModel.findOne({email})
             if (!existUser) {
                 return {
                     success: false,
