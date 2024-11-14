@@ -8,7 +8,7 @@ multer({
 })
 
 const FarmController = require('../../controllers/farms.controller')
-const ItemsController = require('../../controllers/items.controller')
+const ProductController = require('../../controllers/product.controller')
 const VouchersController = require('../../controllers/vouchers.controller')
 const OrdersController = require('../../controllers/orders.controller')
 const CartController = require('../../controllers/cart.controller')
@@ -30,13 +30,12 @@ router.post('/logout', AccessController.logout)
 // contact
 router.post('/contact', AccessController.contact)
 
-//items
-router.post('/items', upload.single('image'), ItemsController.addItem)
-router.get('/items', ItemsController.getItem)
-router.get('/items/farm/:name', ItemsController.getItemByFarm)
-router.get('/items/:id', ItemsController.getItemID)
-router.put('/items/:id', upload.single('image'), ItemsController.updateItem)
-router.delete('/items/:id', ItemsController.deleteItem)
+//product
+router.get('/product', ProductController.getProduct)
+router.get('/product/:id', ProductController.getProductID)
+router.post('/product', upload.single('image'), ProductController.addProduct)
+router.put('/product/:id', upload.single('image'), ProductController.updateProduct)
+router.delete('/product/:id', ProductController.deleteProduct)
 
 //farms
 router.post('/farms', upload.single('image'), FarmController.addFarm)
