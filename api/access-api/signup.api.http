@@ -1,0 +1,13 @@
+@url_api=http://localhost:8081/v1/api/
+
+## User Sign up
+POST {{url_api}}/signup
+Content-Type: application/json
+
+{
+    "name": "johndoe",
+    "email": "johndoe@example.com",
+    "address": "HCM",
+    "phone": "0911111111",
+    "password": "password123"
+}

@@ -15,10 +15,6 @@ const CartController = require('../../controllers/cart.controller')
 const AccessController = require('../../controllers/access.controller')
 const AuthController = require('../../controllers/auth.controller')
 
-// signup
-router.post('/signup', AccessController.signUp)
-// login
-router.post('/login', AccessController.login)
 // get verification code
 router.post('/verification', AccessController.getVerificationCode)
 //check expire verification code

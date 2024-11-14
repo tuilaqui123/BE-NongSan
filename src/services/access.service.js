@@ -1,4 +1,3 @@
-const CustomerModel = require('../models/customer.model')
 const ForgetModel = require('../models/forget.model')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto');
@@ -6,8 +5,9 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken')
 const getData = require('../utils/formatRes');
 const AuthService = require('./auth.service');
-const customerModel = require('../models/customer.model');
+const userModel = require('../models/user.model');
 const ordersModel = require('../models/order.model');
+const {InternalServerError, BadRequestError} = require('../utils/error.response')
 
 const generateVerificationCode = () => {
     return Math.floor(100000 + Math.random() * 900000);
@@ -15,24 +15,28 @@ const generateVerificationCode = () => {
 
 class AccessService {
     // [POST]/v1/api/signup
-    static signup = async({email, password, phone}) => {
+    static signup = async({name, email, address, phone, password}) => {
        try {
-            // const existUser = await CustomerModel.findOne({ $and: [{email: email}, {phone: phone}] })
-            // if (existUser) {
-            //     return {
-            //         statusCode: 201,
-            //         message: "User already exists"
-            //     }
-            // }
+            const existUser = await userModel.findOne({ $and: [{email: email}, {phone: phone}] }).lean()
+            if (existUser) {
+                return {
+                    statusCode: 201,
+                    message: "User already exists"
+                }
+            }
 
-            // const salt = await bcrypt.genSalt()
-            // const passwordHash = await bcrypt.hash(password, salt)
-            
-            // const newUser = await CustomerModel.create({
-            //     email: (email ? email : null),
-            //     password: passwordHash,
-            //     phone: (phone ? phone : null),
-            // })
+            const salt = await bcrypt.genSalt()
+            const passwordHash = await bcrypt.hash(password, salt)
+
+            const newUser = await userModel.create({
+                "name": name,
+                "email": email || null,
+                "address": address,
+                "phone": phone || null,
+                "password": passwordHash,
+            })
+
+            return newUser
             // if (email) {
             //     var transporter = nodemailer.createTransport({
             //         service: 'gmail',
@@ -82,12 +86,21 @@ class AccessService {
             //     success: true,
             //     user: getData({ fields: ['_id', (email ? 'email' : 'phone')], object: newUser})
             // }
-            return 123;
        } catch (error) {
-            return {
-                error: true,
-                message: "Internal Server Error"
+            // Validation Error
+            if (error.name === 'ValidationError') {
+                const errors = Object.values(error.errors).map(key => ({
+                    field: key.path,
+                    message: key.message
+                }))
+
+                return {
+                    type: new BadRequestError('Validation Error', 400),
+                    errors: errors
+                }
             }
+            // Internal Server Error
+            throw new InternalServerError(error.message)
        }
     }
     // [POST]/v1/api/login

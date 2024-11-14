@@ -5,15 +5,14 @@ const COLLECTION_NAME = 'Users'
 
 var userSchema = new Schema({
     name: {
-        type:String,
-        required:true,
+        type: String,
+        required: true,
         unique:true,
         trim: true
     },
     email:{
-        type:String,
-        required:true,
-        unique:true,
+        type: String,
+        unique: true,
         trim: true
     },
     address: {
@@ -23,12 +22,18 @@ var userSchema = new Schema({
     },
     phone: {
         type: String,
-        required: true,
-        trim: true
+        trim: true,
+        unique: true,
+        validate: {
+            validator: function(value) {
+                return /^\+?[1-9]\d{1,14}$/.test(value);
+            },
+            message: (props) => `${props.value} is not a valid phone number!`
+        }
     },
     password:{
-        type:String,
-        required:true,
+        type: String,
+        required: true,
         trim: true,
         minLength: 6
     },
