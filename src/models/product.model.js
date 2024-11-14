@@ -18,6 +18,7 @@ const productSchema = new Schema(
         },
         type: [
             {
+                _id: false,
                 size: {
                     type: String,
                     enum: ["L", "M", "S"],
